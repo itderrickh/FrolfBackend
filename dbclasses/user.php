@@ -1,8 +1,12 @@
 <?php
-require_once '../config.php';
 class UserDAO {
+    private $config;
+    function __construct($config) {
+        $this->config = $config;
+    }
+    
     function createUser($email, $password) {
-        $mysqli = new mysqli($config['dbhost'], $config['dbuser'], $config['dbpass'], $config['dbdatabase']);
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
         $stmt = $mysqli->prepare("INSERT INTO users(email, password) VALUES (?, ?)");
         $hash = password_hash($password);
         $stmt->bind_param("ss", $email, $hash);
@@ -18,7 +22,7 @@ class UserDAO {
     }
 
     function getUser($email) {
-        $mysqli = new mysqli($config['dbhost'], $config['dbuser'], $config['dbpass'], $config['dbdatabase']);
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
         $stmt = $mysqli->prepare("SELECT id, email, password FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();

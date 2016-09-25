@@ -1,8 +1,8 @@
 <?php
 require_once './vendorlib/passwordLib.php';
 require_once './config.php';
-include './dbclasses/user.php';
-$userDao = new UserDAO;
+require_once './dbclasses/user.php';
+$userDao = new UserDAO($config);
 
 //Get the posted variables
 $email = $_POST["email"];
