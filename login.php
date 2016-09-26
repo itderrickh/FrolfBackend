@@ -2,11 +2,13 @@
 require_once './vendorlib/passwordLib.php';
 require_once './config.php';
 require_once './dbclasses/user.php';
+$AJAX_FORM = json_decode(file_get_contents('php://input'), true);
+
 $userDao = new UserDAO($config);
 
 //Get the posted variables
-$email = $_POST["email"];
-$password = $_POST["password"];
+$email = $AJAX_FORM["email"];
+$password = $AJAX_FORM["password"];
 
 //If the user doesn't exist, we should register them
 if(is_null($userDao->getUser($email)["email"])) {
