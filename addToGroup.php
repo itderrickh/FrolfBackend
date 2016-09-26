@@ -10,7 +10,7 @@ $groupId = $AJAX_FORM["groupId"];
 $userId = $AJAX_FORM["userId"];
 $token = $_SERVER['HTTP_AUTHORIZE'];
 
-if(verifyToken($token)) {
+if(verifyToken($token, $config)) {
     $userGroupDAO->addUserToGroup($groupId, $userId);
 } else {
     header('HTTP/1.1 401 Unauthorized');
