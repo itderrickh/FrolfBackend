@@ -13,4 +13,9 @@ function verifyToken($token, $config) {
 
     return ($what_signature_should_be == $recieved_signature);
 }
+
+function getTokenInfo($token) {
+    $jwt_values = explode('.', $token);
+    return json_decode(base64_decode($jwt_values[1]), true);
+}
 ?>
