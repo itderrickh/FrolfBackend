@@ -40,5 +40,4 @@ class UserDAO {
         return $user;
     }
 }
-
 ?>

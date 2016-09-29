@@ -20,6 +20,12 @@ class GroupDAO {
         $stmt2->execute();
         $stmt2->close();
         
+        //Insert all scores
+        $stmt3 = $mysqli->prepare("CALL insertUserScores(?, ?)");
+        $stmt3->bind_param("ii", $groupId, $userId);
+        $stmt3->execute();
+        $stmt3->close();
+        
         $mysqli->close();
         return $groupId;
     }
@@ -28,6 +34,7 @@ class GroupDAO {
         $resultGroups = array();
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
         $stmt = $mysqli->prepare("SELECT groups.id, groups.name, latitude, longitude, users.email FROM groups RIGHT JOIN usergroups ON usergroups.groupid = groups.id RIGHT JOIN users ON users.id = usergroups.userid WHERE iscomplete = 0 AND DATE(NOW()) = datecreated AND usergroups.isleader");
+        $stmt->bind_param("sdd", $name, $latitude, $longitude);
         $stmt->execute();
         
         $stmt->bind_result($id, $name, $datecreated, $latitude, $longitude, $email);
@@ -37,6 +44,33 @@ class GroupDAO {
             $row['datecreated'] = $datecreated;
             $row['latitude'] = $latitude;
             $row['longitude'] = $longitude;
+            $row['email'] = $email;
+            array_push($resultGroups, $row);
+        }
+
+        $stmt->close();
+        $mysqli->close();
+        
+        return $resultGroups;
+    }
+    
+    function getGroupData($groupid) {
+        $resultGroups = array();
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
+        $stmt = $mysqli->prepare("SELECT scores.userid, scores.value, scores.holenum, usergroups.groupid, users.email FROM scores
+                                  LEFT JOIN users ON users.id = scores.userid
+                                  LEFT JOIN usergroups ON usergroups.userid = users.id
+                                  LEFT JOIN groups ON groups.id = usergroups.groupid
+                                  WHERE groups.id = ?");
+        $stmt->bind_param("i", $groupid);                          
+        $stmt->execute();
+        
+        $stmt->bind_result($userid, $value, $holenum, $groupid, $email);
+        while ($stmt->fetch()) {
+            $row['user'] = $userid;
+            $row['value'] = $value;
+            $row['holehum'] = $holenum;
+            $row['groupid'] = $groupid;
             $row['email'] = $email;
             array_push($resultGroups, $row);
         }
