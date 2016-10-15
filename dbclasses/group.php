@@ -29,6 +29,22 @@ class GroupDAO {
         $mysqli->close();
         return $groupId;
     }
+
+    function joinGroup($groupId, $userId) {
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
+        $stmt = $mysqli->prepare("INSERT INTO usergroups(groupid, userid, isleader) VALUES (?, ?, 0)");
+        $stmt->bind_param("ii", $groupId, $userId);
+        $stmt->execute();
+        $stmt->close();
+        
+        //Insert all scores
+        $stmt2 = $mysqli->prepare("CALL insertUserScores(?, ?)");
+        $stmt2->bind_param("ii", $groupId, $userId);
+        $stmt2->execute();
+        $stmt2->close();
+        
+        $mysqli->close();
+    }
     
     function getAvailableGroups() {
         $resultGroups = array();
