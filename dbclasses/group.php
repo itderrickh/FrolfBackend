@@ -49,7 +49,7 @@ class GroupDAO {
     function getAvailableGroups() {
         $resultGroups = array();
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
-        $stmt = $mysqli->prepare("SELECT groups.id, groups.datecreated, groups.name, latitude, longitude, users.email FROM groups RIGHT JOIN usergroups ON usergroups.groupid = groups.id RIGHT JOIN users ON users.id = usergroups.userid WHERE iscomplete = 0 AND DATE(NOW()) = datecreated AND usergroups.isleader");
+        $stmt = $mysqli->prepare("SELECT groups.id, groups.name, groups.datecreated, latitude, longitude, users.email FROM groups RIGHT JOIN usergroups ON usergroups.groupid = groups.id RIGHT JOIN users ON users.id = usergroups.userid WHERE iscomplete = 0 AND DATE(NOW()) = datecreated AND usergroups.isleader");
         $stmt->execute();
         
         $stmt->bind_result($id, $name, $datecreated, $latitude, $longitude, $email);
