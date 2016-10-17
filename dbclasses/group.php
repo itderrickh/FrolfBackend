@@ -85,7 +85,7 @@ class GroupDAO {
             $row['id'] = $id;
             $row['user'] = $userid;
             $row['value'] = $value;
-            $row['holehum'] = $holenum;
+            $row['holeNum'] = $holenum;
             $row['groupid'] = $groupid;
             $row['email'] = $email;
             array_push($resultGroups, $row);
