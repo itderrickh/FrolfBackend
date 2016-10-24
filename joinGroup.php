@@ -16,7 +16,9 @@ $token = $_SERVER['HTTP_AUTHORIZE'];
 if(verifyToken($token, $config)) {
     $tokenInfo = getTokenInfo($token);
     $user = $userDAO->getUser($tokenInfo['email']);
-    $groupId = $groupDAO->joinGroup($groupId, $user['id']);
+    if(!$groupDAO->isInGroup($groupId, $user['id'])) {
+        $groupDAO->joinGroup($groupId, $user['id']);
+    }
 } else {
     header('HTTP/1.1 401 Unauthorized');
 }

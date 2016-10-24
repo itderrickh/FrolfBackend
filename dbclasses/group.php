@@ -30,6 +30,18 @@ class GroupDAO {
         return $groupId;
     }
 
+    function isInGroup($groupId, $userId) {
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
+        $stmt = $mysqli->prepare("SELECT COUNT(*) FROM usergroups WHERE userid = ? AND groupid = ?");
+        $stmt->bind_param("ii", $userId, $groupId);                          
+        $stmt->execute();
+        
+        $stmt->bind_result($count);
+        $stmt->fetch();
+
+        return $count > 0;
+    }
+
     function joinGroup($groupId, $userId) {
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
         $stmt = $mysqli->prepare("INSERT INTO usergroups(groupid, userid, isleader) VALUES (?, ?, 0)");
