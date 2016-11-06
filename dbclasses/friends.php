@@ -16,10 +16,11 @@ class FriendsDAO {
         $stmt->execute();
 
         $resultGroups = array();
-        $stmt->bind_result($id, $email);
+        $stmt->bind_result($id, $email, $friendId);
         while ($stmt->fetch()) {
             $row['id'] = $id;
             $row['email'] = $email;
+            $row['friendid'] = $friendId;
             array_push($resultGroups, $row);
         }
 
@@ -32,7 +33,7 @@ class FriendsDAO {
     function addFriend($userId, $friendId) {
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
         $stmt = $mysqli->prepare("INSERT INTO friends (dateadded, friendid, userid) VALUES (NOW(), ?, ?)");
-        $stmt->bind_param("i", $friendId, $userId);
+        $stmt->bind_param("ii", $friendId, $userId);
         $stmt->execute();
 
         $stmt->close();
@@ -48,10 +49,11 @@ class FriendsDAO {
         $stmt->execute();
 
         $resultGroups = array();
-        $stmt->bind_result($id, $email);
+        $stmt->bind_result($id, $email, $dateadded);
         while ($stmt->fetch()) {
             $row['id'] = $id;
             $row['email'] = $email;
+            $row['dateadded'] = $dateadded;
             array_push($resultGroups, $row);
         }
 
@@ -59,6 +61,29 @@ class FriendsDAO {
         $mysqli->close();
 
         return $resultGroups;
+    }
+
+    function getFrontPageStats($userId) {
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
+        $stmt = $mysqli->prepare("CALL getFrontPageStats(?)");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $resultStats = array();
+        $stmt->bind_result($id, $datescored, $groupName, $score, $par, $holes);
+        while ($stmt->fetch()) {
+            $row['id'] = $id;
+            $row['datescored'] = $datescored;
+            $row['groupname'] = $groupName;
+            $row['score'] = $score;
+            $row['par'] = $par;
+            $row['holes'] = $holes;
+            array_push($resultStats, $row);
+        }
+
+        $stmt->close();
+        $mysqli->close();
+
+        return $resultStats;
     }
 }
 ?>
