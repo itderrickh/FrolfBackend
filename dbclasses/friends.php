@@ -41,7 +41,7 @@ class FriendsDAO {
 
     function getFriends($userId) {
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
-        $stmt = $mysqli->prepare("SELECT friendUser.email, friends.dateadded FROM friends
+        $stmt = $mysqli->prepare("SELECT friendUser.id, friendUser.email, friends.dateadded FROM friends
                                   LEFT JOIN users AS friendUser ON friendUser.id = friendid
                                   WHERE friends.userid = ?");
         $stmt->bind_param("i", $userId);
