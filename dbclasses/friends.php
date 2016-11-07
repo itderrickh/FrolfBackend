@@ -69,8 +69,9 @@ class FriendsDAO {
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         $resultStats = array();
-        $stmt->bind_result($id, $datescored, $groupName, $score, $par, $holes);
+        $stmt->bind_result($email, $id, $datescored, $groupName, $score, $par, $holes);
         while ($stmt->fetch()) {
+            $row['email'] = $email;
             $row['id'] = $id;
             $row['datescored'] = $datescored;
             $row['groupname'] = $groupName;
