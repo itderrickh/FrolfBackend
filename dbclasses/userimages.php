@@ -22,9 +22,9 @@ class UserImagesDAO {
         $stmt = $mysqli->prepare("INSERT INTO userimages(userid, url) VALUES (?, ?)");
         
         //Make a url here
-        
+        $url = 'http//webdev.cs.uwosh.edu/students/heined50/FrolfBackend/uploads/' + $uuid + '.jpg';
 
-        $stmt->bind_param("ii", $userId, $groupId);
+        $stmt->bind_param("ii", $userId, $url);
         $stmt->execute();
         
         $stmt->close();
