@@ -7,12 +7,14 @@ class FriendsDAO {
 
     function getRecentGroupUsers($userId) {
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
+
         $stmt = $mysqli->prepare("SELECT DISTINCT users.id, users.email FROM groups
                                   LEFT JOIN usergroups ON usergroups.groupid = groups.id
                                   LEFT JOIN users ON usergroups.userid = users.id
                                   WHERE users.id NOT IN (SELECT friendid FROM friends WHERE userid = ?)
                                   AND users.id <> ?");
         $stmt->bind_param("ii", $userId, $userId);
+
         $stmt->execute();
 
         $resultGroups = array();
