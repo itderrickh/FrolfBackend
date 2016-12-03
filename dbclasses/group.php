@@ -30,6 +30,15 @@ class GroupDAO {
         return $groupId;
     }
 
+    function finishGame($groupId) {
+        $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
+        $stmt = $mysqli->prepare("UPDATE groups SET iscomplete = 1 WHERE id = ?");
+        $stmt->bind_param("i", $groupId);
+        $stmt->execute();
+        $stmt->close();
+        $mysqli->close();
+    }
+
     function isInGroup($groupId, $userId) {
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
         $stmt = $mysqli->prepare("SELECT COUNT(*) FROM usergroups WHERE userid = ? AND groupid = ?");

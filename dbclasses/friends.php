@@ -43,18 +43,26 @@ class FriendsDAO {
 
     function getFriends($userId) {
         $mysqli = new mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['dbpass'], $this->config['dbdatabase']);
-        $stmt = $mysqli->prepare("SELECT friendUser.id, friendUser.email, friends.dateadded FROM friends
-                                  LEFT JOIN users AS friendUser ON friendUser.id = friendid
-                                  WHERE friends.userid = ?");
-        $stmt->bind_param("i", $userId);
+        $stmt = $mysqli->prepare("SELECT friendid, email, dateadded, IF(MAX(playing) = 1, 1, 0) AS playing FROM (SELECT DISTINCT friends.friendid, email, friends.dateadded, 1 AS playing FROM groups
+                                    LEFT JOIN usergroups ON usergroups.groupid = groups.id
+                                    LEFT JOIN users ON usergroups.userid = users.id
+                                    LEFT JOIN friends ON friends.friendid = users.id
+                                    WHERE iscomplete = 0 AND friends.userid = ? AND datecreated = NOW()
+                                    UNION
+                                    SELECT friendUser.id, friendUser.email, friends.dateadded, 0 AS playing FROM friends
+                                    LEFT JOIN users AS friendUser ON friendUser.id = friendid
+                                    WHERE friends.userid = ?) AS InnerGroup
+                                    GROUP BY InnerGroup.email");
+        $stmt->bind_param("ii", $userId, $userId);
         $stmt->execute();
 
         $resultGroups = array();
-        $stmt->bind_result($id, $email, $dateadded);
+        $stmt->bind_result($id, $email, $dateadded, $isplaying);
         while ($stmt->fetch()) {
             $row['id'] = $id;
             $row['email'] = $email;
             $row['dateadded'] = $dateadded;
+            $row['isplaying'] = $isplaying;
             array_push($resultGroups, $row);
         }
 
