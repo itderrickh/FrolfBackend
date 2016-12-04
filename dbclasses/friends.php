@@ -47,7 +47,7 @@ class FriendsDAO {
                                     LEFT JOIN usergroups ON usergroups.groupid = groups.id
                                     LEFT JOIN users ON usergroups.userid = users.id
                                     LEFT JOIN friends ON friends.friendid = users.id
-                                    WHERE iscomplete = 0 AND friends.userid = ? AND datecreated = NOW()
+                                    WHERE iscomplete = 0 AND friends.userid = ? AND DATE(datecreated) = DATE(NOW())
                                     UNION
                                     SELECT friendUser.id, friendUser.email, friends.dateadded, 0 AS playing FROM friends
                                     LEFT JOIN users AS friendUser ON friendUser.id = friendid
